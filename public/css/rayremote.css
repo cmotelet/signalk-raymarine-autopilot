@@ -1,0 +1,234 @@
+/*
+@media (max-height: 612px) {
+  .transformation {
+    transform: scale(0.75) translate(0%, -10%);
+  }
+}
+*/
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+#main {
+  margin: auto;
+  width: 100vw;
+  height: 100vh;
+}
+
+.bgRemoteBig {
+  margin: auto;
+  width: 238px;
+  height: 612px;
+  position: relative;
+  background-image: url("../img/bgRemoteBig.png");
+}
+
+.btnCircleWithDotRed {
+  width: 70px;
+  height: 70px;
+  background-image: url("../img/btnCircleWithDotRed.png");
+}
+.btnCircleWithDotRed:active {
+  background-position-x: -70px;
+}
+
+.btnCircleRed {
+  width: 70px;
+  height: 70px;
+  background-image: url("../img/btnCircleRed.png");
+}
+.btnCircleRed:active {
+  background-position-x: -70px;
+}
+
+.btnLeftBlack {
+  width: 50px;
+  height: 54px;
+  background-image: url("../img/btnLeftBlack.png");
+  background-size: 100px;
+}
+.btnLeftBlack:active {
+  background-position-x: -50px;
+}
+
+.btnRightBlack {
+  width: 50px;
+  height: 54px;
+  background-image: url("../img/btnRightBlack.png");
+  background-size: 100px;
+}
+.btnRightBlack:active {
+  background-position-x: -50px;
+}
+
+.btnTopBlack {
+  width: 54px;
+  height: 50px;
+  left: 90px;
+  top: 280px;
+  background-image: url("../img/btnTopBlack.png");
+  background-size: 55px;
+}
+.btnTopBlack:active {
+  background-position-y: -50px;
+}
+
+.btnBottomBlack {
+  width: 54px;
+  height: 50px;
+  left: 90px;
+  top: 378px;
+  background-image: url("../img/btnBottomBlack.png");
+  background-size: 55px;
+}
+.btnBottomBlack:active {
+  background-position-y: -50px;
+}
+
+.btnTopSmallBlack {
+  width: 52px;
+  height: 38px;
+  left: 92px;
+  top: 474px;
+  background-image: url("../img/btnTopSmallBlack.png");
+  background-size: 104px;
+}
+.btnTopSmallBlack:active {
+  background-position-x: -52px;
+}
+
+.btnBottomSmallBlack {
+  width: 52px;
+  height: 38px;
+  left: 92px;
+  top: 514px;
+  background-image: url("../img/btnBottomSmallBlack.png");
+  background-size: 104px;
+}
+.btnBottomSmallBlack:active {
+  background-position-x: -52px;
+}
+
+.defaultTextFontKey {
+  color: white;
+  position: absolute;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.defaultKey {
+  cursor: pointer;
+  position: absolute;
+  background-repeat: no-repeat;
+}
+
+#topBarIcon {
+  top: 94px;
+  left: 38px;
+  width: 155px;
+  height: 18px;
+  position: absolute;
+}
+
+.icon18x18 {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position-x: right;
+  background-color: initial;
+}
+#sendIcon {
+  left: 140px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAAArElEQVR4AcXBAUaDcQAH0JeQiElAlKAADAmBEOgISTpA0AVSdYECCQQGwAwopDpBBCIhQMPGtoHxGww+fxvA3jMfLQ8urJspk68OTXWn5V9EvKiZYc+7iG8bSs7tWwCneuLLskLEnxtr2NYRDYU3bRE/NnEkYldhxaWh+LWKhnhWqGNHW9xjS4zUVDRFByeibwmf4lhFV0TdooE4wKO4VXGlqwk+xBmuxZN5GAPX0UGCceRg7AAAAABJRU5ErkJggg==);
+  visibility: hidden;
+}
+
+#errorIcon {
+  left: 122px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAAAwElEQVR4AZXRtXUDMBQAwOvDjaEMwwBhWiE0RKiy9wiWYc4W3iSoGcKRS71n9qmU9FH7+izbtWVZr5pyHsR0PMiqMOjdp2MDYMCxT++GSfKCYILEhOBVHoAbf+YA+/YBc/5cA/T4dwagpATg1L8eYFU0XfPRlGgDKIi6az7qFhWAoqgTlTXRKSoC61I6gJRuPRV+XjPSWSqcK/9mVD6a8e+qcphjSMYEQZZkyJvKtTwbUiHvsdmCgV7Ldu1a1qtdZTafSCFQvo25AAAAAElFTkSuQmCC);
+  visibility: hidden;
+}
+
+#keyPlusOne {
+  top: 325px;
+  right: 20px;
+}
+#keyPlusOneText {
+  top: 16px;
+  left: 18px;
+}
+
+#keyMinusOne {
+  top: 325px;
+  left: 20px;
+}
+#keyMinusOneText {
+  top: 16px;
+  left: 14px;
+}
+
+#keyPlusTen {
+  top: 325px;
+  right: 68px;
+}
+#keyPlusTenText {
+  top: 16px;
+  left: 10px;
+}
+
+#keyMinusTen {
+  top: 325px;
+  left: 68px;
+}
+#keyMinusTenText {
+  top: 16px;
+  left: 10px;
+}
+
+#keyStandby {
+  top: 420px;
+  left: 30px;
+}
+#keyStandbyText {
+  top: 28px;
+  left: 13px;
+  font-size: 10px;
+}
+
+#keyAuto {
+  top: 420px;
+  right: 30px;
+}
+#keyAutoText {
+  top: 28px;
+  left: 21px;
+  font-size: 10px;
+}
+
+#tackLabel {
+  top: 260px;
+  left: 91px;
+  font-size: 14px;
+}
+
+#keyTackPort {
+  top: 242px;
+  left: 38px;
+}
+#keyTackPortText {
+  top: 16px;
+  left: 10px;
+}
+
+#keyTackStarbord {
+  top: 242px;
+  right: 38px;
+}
+#keyTackStarbordText {
+  top: 16px;
+  right: 10px;
+}

@@ -21,8 +21,17 @@ const state_commands = {
     "auto":    "%s,3,126208,%s,%s,17,01,63,ff,00,f8,04,01,3b,07,03,04,04,40,00,05,ff,ff",
     "wind":    "%s,3,126208,%s,%s,17,01,63,ff,00,f8,04,01,3b,07,03,04,04,00,01,05,ff,ff",
     "route":   "%s,3,126208,%s,%s,17,01,63,ff,00,f8,04,01,3b,07,03,04,04,80,01,05,ff,ff",
-    "standby": "%s,3,126208,%s,%s,17,01,63,ff,00,f8,04,01,3b,07,03,04,04,00,00,05,ff,ff"
-  }
+    "standby": "%s,3,126208,%s,%s,17,01,63,ff,00,f8,04,01,3b,07,03,04,04,00,00,05,ff,ff",
+}
+const keys_code = {
+    "+1":      "07,f8",
+    "+10":     "08,f7",
+    "-1":      "05,fa",
+    "-10":     "06,f9",
+    "-1-10":   "21,de",
+    "+1+10":   "22,dd",
+}
+const key_command = "%s,7,126720,%s,%s,22,3b,9f,f0,81,86,21,%s,ff,ff,ff,ff,ff,c1,c2,cd,66,80,d3,42,b1,c8"
 const heading_command = "%s,3,126208,%s,%s,14,01,50,ff,00,f8,03,01,3b,07,03,04,06,%s,%s"
 const wind_direction_command = "%s,3,126208,%s,%s,14,01,41,ff,00,f8,03,01,3b,07,03,04,04,%s,%s"
 const raymarine_ttw_Mode = "%s,3,126208,%s,%s,17,01,63,ff,00,f8,04,01,3b,07,03,04,04,81,01,05,ff,ff"
@@ -176,6 +185,13 @@ function setState(app, deviceid, command_json)
   return [util.format(state_commands[state], (new Date()).toISOString(), default_src, deviceid)]
 }
 
+function setKey(app, deviceid, command_json)
+{
+  var key = command_json["value"]
+  app.debug("setKey: " + key)
+  return [util.format(key_command, (new Date()).toISOString(), default_src, everyone_dst, keys_code[key])]
+}
+
 function advanceWaypoint(app, deviceid, command_json)
 {
   return [util.format(raymarine_ttw_Mode, (new Date()).toISOString(),
@@ -211,6 +227,10 @@ function sendCommand(app, deviceid, command_json)
   else if ( action == "silenceAlarm" )
   {
     n2k_msgs = silenceAlarm(app, deviceid, command_json)
+  }
+  else if ( action == "setKey" )
+  {
+    n2k_msgs = setKey(app, deviceid, command_json)
   }
   if ( n2k_msgs )
   {
