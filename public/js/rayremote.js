@@ -3,7 +3,6 @@ const commands = {
   "wind":    '{"action":"setState","value":"wind"}',
   "route":   '{"action":"setState","value":"route"}',
   "standby": '{"action":"setState","value":"standby"}',
-  "track":   '{"action":"setState","value":"track"}',
   "+1":      '{"action":"setKey","value":"+1"}',
   "+10":     '{"action":"setKey","value":"+10"}',
   "-1":      '{"action":"setKey","value":"-1"}',
@@ -21,11 +20,21 @@ var sendCommand = function(cmd) {
       "Content-Type": "application/json"
     },
     body: commands[cmd],
-  }).then(function(data) {
+  }).then(function(response) {
       setTimeout(function(){document.getElementById("sendIcon").style.visibility = 'hidden';}, 800);
+      if (response.status !== 200) {
+        document.getElementById("errorIcon").style.visibility = 'visible';
+        if (response.status === 401) {
+          alert('You must be authenticated to send commands !')
+        } else {
+          document.getElementById("errorIcon").style.visibility = 'visible';
+          alert('[' + response.status + ']' + response.text)
+        }
+      }
     }, function(status) {
         document.getElementById("sendIcon").style.visibility = 'hidden';
         document.getElementById("errorIcon").style.visibility = 'visible';
+        alert(status.message)
     }
   );
 }
