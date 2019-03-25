@@ -32,6 +32,7 @@ html {
 }
 .btnCircleWithDotRed:active {
   background-position-x: -70px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnCircleRed {
@@ -41,6 +42,7 @@ html {
 }
 .btnCircleRed:active {
   background-position-x: -70px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnLeftBlack {
@@ -51,6 +53,7 @@ html {
 }
 .btnLeftBlack:active {
   background-position-x: -50px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnRightBlack {
@@ -61,6 +64,7 @@ html {
 }
 .btnRightBlack:active {
   background-position-x: -50px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnTopBlack {
@@ -73,6 +77,7 @@ html {
 }
 .btnTopBlack:active {
   background-position-y: -50px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnBottomBlack {
@@ -85,33 +90,33 @@ html {
 }
 .btnBottomBlack:active {
   background-position-y: -50px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnTopSmallBlack {
   width: 52px;
   height: 38px;
-  left: 92px;
-  top: 474px;
   background-image: url("../img/btnTopSmallBlack.png");
   background-size: 104px;
 }
 .btnTopSmallBlack:active {
   background-position-x: -52px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .btnBottomSmallBlack {
   width: 52px;
   height: 38px;
-  left: 92px;
-  top: 514px;
   background-image: url("../img/btnBottomSmallBlack.png");
   background-size: 104px;
 }
 .btnBottomSmallBlack:active {
   background-position-x: -52px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .defaultTextFontKey {
+  width: 100%;
   color: white;
   position: absolute;
   text-align: center;
@@ -154,81 +159,120 @@ html {
 }
 
 #keyPlusOne {
-  top: 325px;
+  top: 296px;
   right: 20px;
 }
 #keyPlusOneText {
   top: 16px;
-  left: 18px;
 }
 
 #keyMinusOne {
-  top: 325px;
+  top: 296px;
   left: 20px;
 }
 #keyMinusOneText {
   top: 16px;
-  left: 14px;
 }
 
 #keyPlusTen {
-  top: 325px;
+  top: 296px;
   right: 68px;
 }
 #keyPlusTenText {
   top: 16px;
-  left: 10px;
 }
 
 #keyMinusTen {
-  top: 325px;
+  top: 296px;
   left: 68px;
 }
 #keyMinusTenText {
   top: 16px;
-  left: 10px;
+}
+
+#keyMute {
+  top: 362px;
+  left: 28px;
+}
+#keyMuteText {
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  left: 16px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAq0lEQVQoz62QuxHCMBBEn/gYBhIKkIaCqEF9yYVQApWcSyAywRLIso0/JLCR7uZpZ2/hr4oyjeekpKgJZFKPmfKsdSxJAi7pK+aKY5Tyh3GGpA47gCl2rkkfLkUlE2eqknQzvdRjClVDfNKW3W5eiMfasOc6bBagBo+9guME9wHKzxsegOBMHlPYNjzmHtafPa53EQOOuZC0juWGbITNKggOoCa44OqlTD/pDcynlGwXF2U7AAAAAElFTkSuQmCC);
+  background-size: 20px;
+}
+
+#keyOther {
+  top: 362px;
+  right: 28px;
+}
+#keyOtherText {
+  top: 16px;
 }
 
 #keyStandby {
-  top: 420px;
-  left: 30px;
+  top: 470px;
+  left: 84px;
 }
 #keyStandbyText {
   top: 28px;
-  left: 13px;
   font-size: 10px;
 }
 
 #keyAuto {
-  top: 420px;
-  right: 30px;
+  top: 412px;
+  left: 26px;
 }
 #keyAutoText {
   top: 28px;
-  left: 21px;
+  font-size: 10px;
+}
+
+#keyWind {
+  top: 356px;
+  left: 84px;
+}
+#keyWindText {
+  top: 28px;
+  font-size: 10px;
+}
+
+#keyTrack {
+  top: 412px;
+  right: 26px;
+}
+#keyTrackText {
+  top: 28px;
   font-size: 10px;
 }
 
 #tackLabel {
-  top: 260px;
-  left: 91px;
+  top: 250px;
   font-size: 14px;
+  z-index: -1;
 }
 
 #keyTackPort {
-  top: 242px;
+  top: 230px;
   left: 38px;
 }
 #keyTackPortText {
   top: 16px;
+  width: 25px;
+  height: 25px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAd0lEQVRIx73WSw6AIAwE0I5H9P53qTsTFYR+ZliXvJTPACw43N3NzABgt/bIANFapCYtunjXgg1sdVIFlkgH8It0AVOkExgi3cAHYQAPhAXcCBMIx0p26JZLtvGyIyy7jLJYkQWkLOplj5bs+a1C0Vg5SbX1r9EF/au4qJQe+D0AAAAASUVORK5CYII=);
   left: 10px;
 }
 
 #keyTackStarbord {
-  top: 242px;
+  top: 230px;
   right: 38px;
 }
 #keyTackStarbordText {
   top: 16px;
+  width: 25px;
+  height: 25px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAg0lEQVRIx81WQQ7AIAwCn+j//+IuW6IeZqmyjDOIqZYW7QYCULg9Sn9AVKQacRaRZNRgxR1M3EbMihUud8RRLndvGeHyRDlW3GN1f+NS6YmsEdXmyxgx0+WqUcEH+Ee57A9v/8L2ZrTHij0g7VFvH1r28es2GLYVAFVIiirlinMVenABXi3An6ky178AAAAASUVORK5CYII=);
   right: 10px;
 }

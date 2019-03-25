@@ -29,19 +29,19 @@
         <div class="icon18x18" id="sendIcon"></div>
         <div class="icon18x18" id="errorIcon"></div>
       </div>
-      <div class="defaultKey btnCircleWithDotRed" id="keyStandby" onClick="sendCommand('standby');">
-        <div class="defaultTextFontKey" id="keyStandbyText">STANDBY</div>
-      </div>
-      <div class="defaultKey btnCircleRed" id="keyAuto" onClick="sendCommand('auto');">
-        <div class="defaultTextFontKey" id="keyAutoText">AUTO</div>
-      </div>
       <div class="defaultKey btnLeftBlack" id="keyTackPort" onClick="sendCommand('-1-10');">
-        <div class="defaultTextFontKey" id="keyTackPortText"><<</div>
+        <div class="defaultTextFontKey" id="keyTackPortText"></div>
       </div>
       <div class="defaultKey btnRightBlack" id="keyTackStarbord" onClick="sendCommand('+1+10');">
-        <div class="defaultTextFontKey" id="keyTackStarbordText">>></div>
+        <div class="defaultTextFontKey" id="keyTackStarbordText"></div>
       </div>
       <div class="defaultTextFontKey" id="tackLabel">: TACK :</div>
+      <div class="defaultKey btnBottomSmallBlack" id="keyMute" onClick="sendCommand('mute');">
+        <div class="defaultTextFontKey" id="keyMuteText"></div>
+      </div>
+      <div class="defaultKey btnBottomSmallBlack" id="keyOther" onClick="sendCommand('none');">
+        <div class="defaultTextFontKey" id="keyOtherText"></div>
+      </div>
       <div class="defaultKey btnLeftBlack" id="keyMinusOne" onClick="sendCommand('-1');">
         <div class="defaultTextFontKey" id="keyMinusOneText">-1</div>
       </div>
@@ -54,10 +54,18 @@
       <div class="defaultKey btnRightBlack" id="keyPlusOne" onClick="sendCommand('+1');">
         <div class="defaultTextFontKey" id="keyPlusOneText">+1</div>
       </div>
-      <div class="defaultKey btnTopBlack" id="buttonTopBlack"></div>
-      <div class="defaultKey btnBottomBlack" id="buttonBottomBlack"></div>
-      <div class="defaultKey btnTopSmallBlack" id="boutonTopSmallBlack"></div>
-      <div class="defaultKey btnBottomSmallBlack" id="boutonBottomSmallBlack"></div>
+      <div class="defaultKey btnCircleRed" id="keyAuto" onClick="sendCommand('auto');">
+        <div class="defaultTextFontKey" id="keyAutoText">AUTO</div>
+      </div>
+      <div class="defaultKey btnCircleRed" id="keyWind" onClick="sendCommand('wind');">
+        <div class="defaultTextFontKey" id="keyWindText">WIND</div>
+      </div>
+      <div class="defaultKey btnCircleRed" id="keyTrack" onClick="sendCommand('route');">
+        <div class="defaultTextFontKey" id="keyTrackText">TRACK</div>
+      </div>
+      <div class="defaultKey btnCircleWithDotRed" id="keyStandby" onClick="sendCommand('standby');">
+        <div class="defaultTextFontKey" id="keyStandbyText">STANDBY</div>
+      </div>
     </div>
   </div>
   </body>
