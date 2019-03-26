@@ -185,10 +185,28 @@ function setState(app, deviceid, command_json)
   return [util.format(state_commands[state], (new Date()).toISOString(), default_src, deviceid)]
 }
 
-function setKey(app, deviceid, command_json)
+function tackTo(app, deviceid, command_json)
+{
+  var tackTo = command_json["value"]
+  app.debug("tackTo: " + tackTo)
+  if (tackTo === "port")
+  {
+    return [util.format(key_command, (new Date()).toISOString(), default_src, everyone_dst, keys_code["-1-10"])]
+  }
+  else if (tackTo === "starboard")
+  {
+    return [util.format(key_command, (new Date()).toISOString(), default_src, everyone_dst, keys_code["+1+10"])]
+  }
+  else
+  {
+    app.debug("tackTo: unknown " + tackTo)
+  }
+}
+
+function changeHeadingByKey(app, deviceid, command_json)
 {
   var key = command_json["value"]
-  app.debug("setKey: " + key)
+  app.debug("changeHeadingByKey: " + key)
   return [util.format(key_command, (new Date()).toISOString(), default_src, everyone_dst, keys_code[key])]
 }
 
@@ -228,9 +246,13 @@ function sendCommand(app, deviceid, command_json)
   {
     n2k_msgs = silenceAlarm(app, deviceid, command_json)
   }
-  else if ( action == "setKey" )
+  else if ( action == "tackTo" )
   {
-    n2k_msgs = setKey(app, deviceid, command_json)
+    n2k_msgs = tackTo(app, deviceid, command_json)
+  }
+  else if ( action == "changeHeadingByKey" )
+  {
+    n2k_msgs = changeHeadingByKey(app, deviceid, command_json)
   }
   if ( n2k_msgs )
   {
