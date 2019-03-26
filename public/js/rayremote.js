@@ -3,12 +3,12 @@ const commands = {
   "wind":    '{"action":"setState","value":"wind"}',
   "route":   '{"action":"setState","value":"route"}',
   "standby": '{"action":"setState","value":"standby"}',
-  "+1":      '{"action":"setKey","value":"+1"}',
-  "+10":     '{"action":"setKey","value":"+10"}',
-  "-1":      '{"action":"setKey","value":"-1"}',
-  "-10":     '{"action":"setKey","value":"-10"}',
-  "-1-10":   '{"action":"setKey","value":"-1-10"}',
-  "+1+10":   '{"action":"setKey","value":"+1+10"}'
+  "+1":      '{"action":"changeHeadingByKey","value":"+1"}',
+  "+10":     '{"action":"changeHeadingByKey","value":"+10"}',
+  "-1":      '{"action":"changeHeadingByKey","value":"-1"}',
+  "-10":     '{"action":"changeHeadingByKey","value":"-10"}',
+  "tackToPort":   '{"action":"tackTo","value":"port"}',
+  "tackToStarboard":   '{"action":"tackTo","value":"starboard"}'
 }
 
 var sendCommand = function(cmd) {
