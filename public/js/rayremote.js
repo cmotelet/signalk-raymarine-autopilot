@@ -11,6 +11,11 @@ const commands = {
   "tackToStarboard":   '{"action":"tackTo","value":"starboard"}'
 }
 
+var touchEnd = function(event) {
+  event.currentTarget.onclick();
+  event.preventDefault(true);
+}
+
 var sendCommand = function(cmd) {
   document.getElementById("errorIcon").style.visibility = 'hidden';
   document.getElementById("sendIcon").style.visibility = 'visible';
