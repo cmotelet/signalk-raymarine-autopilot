@@ -170,6 +170,16 @@ html {
   visibility: hidden;
 }
 
+#wsstatus {
+  top: 128px;
+  left: 38px;
+  width: 155px;
+  height: 54px;
+  overflow: hidden;
+  position: absolute;
+  text-align: center;
+}
+
 #keyPlusOne {
   top: 296px;
   right: 20px;

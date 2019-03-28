@@ -43,3 +43,32 @@ var sendCommand = function(cmd) {
     }
   );
 }
+
+var ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + window.location.host + "/signalk/v1/stream?subscribe=none");
+
+ws.onopen = function() {
+  var subscriptionObject = {
+    "context": "vessels.self",
+    "subscribe": [{
+      "path": "navigation.courseOverGroundTrue",
+      "period": 5000,
+      "format": "delta",
+      "minPeriod": 1000
+    }]
+  };
+  var subscriptionMessage = JSON.stringify(subscriptionObject);
+  console.log("Sending subscription:" + subscriptionMessage)
+  ws.send(subscriptionMessage);
+}
+
+ws.onclose = function() {
+  console.log("ws close");
+}
+
+ws.onmessage = function(event) {
+  var jsonData = JSON.parse(event.data)
+  var timestamp = new Date(jsonData.updates[0].timestamp)
+  var value = jsonData.updates[0].values[0].value;
+  dataDiv.innerHTML = value + '<BR/>' + timestamp.toDateString() + '<BR/>' + timestamp.toTimeString();
+//  console.log(value)
+}

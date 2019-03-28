@@ -29,6 +29,7 @@
         <div class="icon18x18" id="sendIcon"></div>
         <div class="icon18x18" id="errorIcon"></div>
       </div>
+      <div id="wsstatus"></div>
       <div class="defaultKey btnLeftBlack" id="keyTackPort" onClick="sendCommand('tackToPort');" onTouchend="touchEnd(event)">
         <div class="defaultTextFontKey" id="keyTackPortText"></div>
       </div>
@@ -68,5 +69,9 @@
       </div>
     </div>
   </div>
+    <script>
+      var dataDiv = document.getElementById('wsstatus');
+      console.log(dataDiv);
+    </script>
   </body>
 </html>
