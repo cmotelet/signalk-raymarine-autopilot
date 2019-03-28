@@ -15,6 +15,12 @@ html {
   margin: auto;
   width: 100vw;
   height: 100vh;
+  background-repeat: no-repeat;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 .bgRemoteBig {
@@ -32,7 +38,7 @@ html {
 }
 .btnCircleWithDotRed:active {
   background-position-x: -70px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnCircleRed {
@@ -42,7 +48,7 @@ html {
 }
 .btnCircleRed:active {
   background-position-x: -70px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnLeftBlack {
@@ -53,7 +59,7 @@ html {
 }
 .btnLeftBlack:active {
   background-position-x: -50px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnRightBlack {
@@ -64,7 +70,7 @@ html {
 }
 .btnRightBlack:active {
   background-position-x: -50px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnTopBlack {
@@ -77,7 +83,7 @@ html {
 }
 .btnTopBlack:active {
   background-position-y: -50px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnBottomBlack {
@@ -90,7 +96,7 @@ html {
 }
 .btnBottomBlack:active {
   background-position-y: -50px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnTopSmallBlack {
@@ -101,7 +107,7 @@ html {
 }
 .btnTopSmallBlack:active {
   background-position-x: -52px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .btnBottomSmallBlack {
@@ -112,7 +118,7 @@ html {
 }
 .btnBottomSmallBlack:active {
   background-position-x: -52px;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+/*  -webkit-tap-highlight-color: rgba(0,0,0,0);*/
 }
 
 .defaultTextFontKey {
@@ -122,16 +128,18 @@ html {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+/*
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+*/
 }
 
 .defaultKey {
   cursor: pointer;
   position: absolute;
-  background-repeat: no-repeat;
+/*  background-repeat: no-repeat;*/
 }
 
 #topBarIcon {
