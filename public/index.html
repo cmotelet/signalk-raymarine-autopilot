@@ -22,7 +22,7 @@
       document.addEventListener("touchstart", function() {},false);
     </script>
   </head>
-  <body>
+  <body onload="startUpRayRemote()">
   <div id="main">
     <div class="bgRemoteBig" id="remoteBig">
       <div id="logoSignalK"></div>
@@ -33,7 +33,9 @@
         <div class="icon18x18" id="receiveIcon"></div>
         <div class="icon18x18" id="powerIcon"></div>
       </div>
-      <div id="wsstatus"></div>
+      <div id="bottomBarIcon">&nbsp;Loading Ray Remote...</div>
+      <div id="headingValue"></div>
+      <div id="pilotStatus"></div>
       <div class="defaultKey btnLeftBlack" id="keyTackPort" onClick="sendCommand('tackToPort');" onTouchend="touchEnd(event)">
         <div class="defaultTextFontKey" id="keyTackPortText"></div>
       </div>
@@ -44,7 +46,7 @@
       <div class="defaultKey btnBottomSmallBlack" id="keyMute" onClick="sendCommand('mute');" onTouchend="touchEnd(event)">
         <div class="defaultTextFontKey" id="keyMuteText"></div>
       </div>
-      <div class="defaultKey btnBottomSmallBlack" id="keyPower" onClick="wsClose();" onTouchend="touchEnd(event)">
+      <div class="defaultKey btnBottomSmallBlack" id="keyPower" onClick="wsOpenClose();" onTouchend="touchEnd(event)">
         <div class="defaultTextFontKey" id="keyPowerText"></div>
       </div>
       <div class="defaultKey btnLeftBlack" id="keyMinusOne" onClick="sendCommand('-1');" onTouchend="touchEnd(event)">
@@ -73,9 +75,5 @@
       </div>
     </div>
   </div>
-    <script>
-      var dataDiv = document.getElementById('wsstatus');
-      wsConnect();
-    </script>
   </body>
 </html>

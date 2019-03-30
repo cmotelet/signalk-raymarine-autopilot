@@ -16,6 +16,33 @@ var touchEnd = function(event) {
   event.preventDefault(true);
 }
 
+var ws = null;
+var handlePilotStatusTimeout = null;
+var handleHeadindValueTimeout = null;
+var handleReceiveTimeout = null;
+var connected = false;
+var reconnect = true;
+const timeoutReconnect = 2000;
+const timeoutValue = 2000;
+const timeoutBlink = 500;
+var pilotStatusDiv = 'undefined';
+var headingValueDiv = 'undefined';
+
+var startUpRayRemote = function() {
+  pilotStatusDiv = document.getElementById('pilotStatus');
+  headingValueDiv = document.getElementById('headingValue');
+  setPilotStatus('---');
+  setHeadindValue('---');
+  setTimeout(() => {
+    document.getElementById("receiveIcon").style.visibility = 'hidden';
+    document.getElementById("sendIcon").style.visibility = 'hidden';
+    document.getElementById("errorIcon").style.visibility = 'hidden';
+    document.getElementById("powerIcon").style.visibility = 'hidden';
+    document.getElementById("bottomBarIcon").innerHTML = '';
+    wsConnect();
+  }, 1000);
+}
+
 var sendCommand = function(cmd) {
   document.getElementById("errorIcon").style.visibility = 'hidden';
   document.getElementById("sendIcon").style.visibility = 'visible';
@@ -26,7 +53,7 @@ var sendCommand = function(cmd) {
     },
     body: commands[cmd],
   }).then(function(response) {
-      setTimeout(() => {document.getElementById("sendIcon").style.visibility = 'hidden';}, 800);
+      setTimeout(() => {document.getElementById("sendIcon").style.visibility = 'hidden';}, timeoutBlink);
       if (response.status !== 200) {
         document.getElementById("errorIcon").style.visibility = 'visible';
         if (response.status === 401) {
@@ -46,10 +73,6 @@ var sendCommand = function(cmd) {
   wsConnect();
 }
 
-var ws = null;
-var handleMessageStatus = 'undefined';
-var reconnect = true;
-
 var wsConnect = function() {
   if (ws === null) {
     try {
@@ -58,68 +81,103 @@ var wsConnect = function() {
       ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + window.location.host + "/signalk/v1/stream?subscribe=none");
 
       ws.onopen = function() {
+        connected = true;
         var subscriptionObject = {
           "context": "vessels.self",
-          "subscribe": [{
-            "path": "steering.autopilot.state",
-//          "period": 5000,
-            "format": "delta",
-            "minPeriod": 900
-          }]
+          "subscribe": [
+            {
+              "path": "steering.autopilot.state",
+              "format": "delta",
+              "minPeriod": 900
+            },
+            {
+              "path": "navigation.headingMagnetic",
+              "format": "delta",
+              "minPeriod": 900
+            }
+          ]
         };
         var subscriptionMessage = JSON.stringify(subscriptionObject);
-        console.log("Sending subscription:" + subscriptionMessage)
+//        console.log("Sending subscription:" + subscriptionMessage)
         ws.send(subscriptionMessage);
-        handleMessageStatusTimeout = setTimeout(() => {setMessageStatus('---')}, 3000);
+        handlePilotStatusTimeout = setTimeout(() => {setPilotStatus('---')}, timeoutValue);
+        handleHeadindValueTimeout = setTimeout(() => {setHeadindValue('---')}, timeoutValue);
       }
 
       ws.onclose = function() {
-        console.log("ws close");
+//        console.log("ws close");
         ws = null;
+        connected = false;
         if (reconnect === true) {
-          setTimeout(() => {wsConnect()}, 2000);
+          setTimeout(() => {wsConnect()}, timeoutReconnect);
         }
       }
 
-      ws.onerror = function(error) {
-        console.log("ws error:" + error);
+      ws.onerror = function() {
+        console.log("ws error");
         ws = null;
+        connected = false;
         if (reconnect === true) {
-          setTimeout(() => {wsConnect()}, 2000);
+          setTimeout(() => {wsConnect()}, timeoutReconnect);
         }
       }
 
       ws.onmessage = function(event) {
         document.getElementById("receiveIcon").style.visibility = 'visible';
-        setTimeout(() => {document.getElementById("receiveIcon").style.visibility = 'hidden';}, 500);
+        clearTimeout(handleReceiveTimeout);
+        handleReceiveTimeout = setTimeout(() => {document.getElementById("receiveIcon").style.visibility = 'hidden';}, timeoutBlink);
         var jsonData = JSON.parse(event.data)
-//        var timestamp = new Date(jsonData.updates[0].timestamp)
-        if (typeof jsonData.updates === 'object') {
-          if (typeof jsonData.updates[0].values === 'object') {
-            var value = jsonData.updates[0].values[0].value;
-            setMessageStatus(value);
-            clearTimeout(handleMessageStatusTimeout);
-            handleMessageStatusTimeout = setTimeout(() => {setMessageStatus('---')}, 3000);
-          }
-        }
+        dispatchMessages(jsonData);
       }
 
     } catch (exception) {
       console.error(exception);
-      setTimeout(() => {wsConnect()}, 2000);
+      setTimeout(() => {wsConnect()}, timeoutReconnect);
     }
   }
 }
 
-
-var setMessageStatus = function(value) {
-  dataDiv.innerHTML = value || '???';
+var dispatchMessages = function(jsonData) {
+  if (typeof jsonData.updates === 'object') {
+    jsonData.updates.forEach((update) => {
+      if (typeof update.values === 'object') {
+        update.values.forEach((value) => {
+          if (value.path === "steering.autopilot.state") {
+            clearTimeout(handlePilotStatusTimeout);
+            handlePilotStatusTimeout = setTimeout(() => {setPilotStatus('---')}, timeoutValue);
+            setPilotStatus(value.value);
+          } else if (value.path === "navigation.headingMagnetic") {
+            clearTimeout(handleHeadindValueTimeout);
+            handleHeadindValueTimeout = setTimeout(() => {setHeadindValue('---')}, timeoutValue);
+            setHeadindValue(Math.round(value.value * (180/Math.PI)));
+          }
+        });
+      }
+    });
+  }
 }
 
-var wsClose = function() {
-  reconnect = false;
-  document.getElementById("powerIcon").style.visibility = 'visible';
-  if (ws !== null) {
-    ws.close();
+var setHeadindValue = function(value) {
+  if (typeof value !== 'undefined') {
+    value = (isNaN(value)) ? '---' : 'Mag:' + value + '&deg;';
+  } else {
+    value = '???';
   }
+  headingValueDiv.innerHTML = value;
+}
+
+var setPilotStatus = function(value) {
+  pilotStatusDiv.innerHTML = value || '???';
+}
+
+var wsOpenClose = function() {
+  if (connected === false) {
+    wsConnect();
+  } else {
+      reconnect = false;
+      document.getElementById("powerIcon").style.visibility = 'visible';
+      if (ws !== null) {
+        ws.close();
+      }
+    }
 }
