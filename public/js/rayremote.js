@@ -25,27 +25,40 @@ var reconnect = true;
 const timeoutReconnect = 2000;
 const timeoutValue = 2000;
 const timeoutBlink = 500;
+const noDataMessage = 'NO DATA';
 var pilotStatusDiv = 'undefined';
 var headingValueDiv = 'undefined';
+var receiveIconDiv = 'undefined';
+var sendIconDiv = 'undefined';
+var errorIconDiv = 'undefined';
+var powerOnIconDiv = 'undefined';
+var powerOffIconDiv = 'undefined';
+var bottomBarIconDiv = 'undefined';
 
 var startUpRayRemote = function() {
   pilotStatusDiv = document.getElementById('pilotStatus');
   headingValueDiv = document.getElementById('headingValue');
-  setPilotStatus('---');
-  setHeadindValue('---');
+  receiveIconDiv = document.getElementById('receiveIcon');
+  sendIconDiv = document.getElementById('sendIcon');
+  errorIconDiv = document.getElementById('errorIcon');
+  powerOnIconDiv = document.getElementById('powerOnIcon');
+  powerOffIconDiv = document.getElementById('powerOffIcon');
+  bottomBarIconDiv = document.getElementById('bottomBarIcon');
+
+  setPilotStatus(noDataMessage);
+  setHeadindValue(noDataMessage);
   setTimeout(() => {
-    document.getElementById("receiveIcon").style.visibility = 'hidden';
-    document.getElementById("sendIcon").style.visibility = 'hidden';
-    document.getElementById("errorIcon").style.visibility = 'hidden';
-    document.getElementById("powerIcon").style.visibility = 'hidden';
-    document.getElementById("bottomBarIcon").innerHTML = '';
+    receiveIconDiv.style.visibility = 'hidden';
+    sendIconDiv.style.visibility = 'hidden';
+    errorIconDiv.style.visibility = 'hidden';
+    bottomBarIconDiv.style.visibility = 'hidden';
     wsConnect();
   }, 1000);
 }
 
 var sendCommand = function(cmd) {
-  document.getElementById("errorIcon").style.visibility = 'hidden';
-  document.getElementById("sendIcon").style.visibility = 'visible';
+  errorIconDiv.style.visibility = 'hidden';
+  sendIconDiv.style.visibility = 'visible';
   window.fetch('/plugins/raymarineautopilot/command', {
     method: 'POST',
     headers: {
@@ -53,19 +66,19 @@ var sendCommand = function(cmd) {
     },
     body: commands[cmd],
   }).then(function(response) {
-      setTimeout(() => {document.getElementById("sendIcon").style.visibility = 'hidden';}, timeoutBlink);
+      setTimeout(() => {sendIconDiv.style.visibility = 'hidden';}, timeoutBlink);
       if (response.status !== 200) {
-        document.getElementById("errorIcon").style.visibility = 'visible';
+        errorIconDiv.style.visibility = 'visible';
         if (response.status === 401) {
           alert('You must be authenticated to send commands !')
         } else {
-          document.getElementById("errorIcon").style.visibility = 'visible';
+          errorIconDiv.style.visibility = 'visible';
           alert('[' + response.status + ']' + response.text)
         }
       }
     }, function(status) {
-        document.getElementById("sendIcon").style.visibility = 'hidden';
-        document.getElementById("errorIcon").style.visibility = 'visible';
+        sendIconDiv.style.visibility = 'hidden';
+        errorIconDiv.style.visibility = 'visible';
         alert(status.message)
     }
   );
@@ -73,15 +86,23 @@ var sendCommand = function(cmd) {
   wsConnect();
 }
 
+var sendMute = function() {
+  bottomBarIconDiv.style.visibility = 'visible';
+  bottomBarIconDiv.innerHTML = '&nbsp;Not implemented...'
+  setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
+}
+
 var wsConnect = function() {
   if (ws === null) {
     try {
-      document.getElementById("powerIcon").style.visibility = 'hidden';
       reconnect = true;
       ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + window.location.host + "/signalk/v1/stream?subscribe=none");
 
       ws.onopen = function() {
         connected = true;
+        powerOffIconDiv.style.visibility = 'hidden';
+        powerOnIconDiv.style.visibility = 'visible';
+        errorIconDiv.style.visibility = 'hidden';
         var subscriptionObject = {
           "context": "vessels.self",
           "subscribe": [
@@ -100,14 +121,12 @@ var wsConnect = function() {
         var subscriptionMessage = JSON.stringify(subscriptionObject);
 //        console.log("Sending subscription:" + subscriptionMessage)
         ws.send(subscriptionMessage);
-        handlePilotStatusTimeout = setTimeout(() => {setPilotStatus('---')}, timeoutValue);
-        handleHeadindValueTimeout = setTimeout(() => {setHeadindValue('---')}, timeoutValue);
+        handlePilotStatusTimeout = setTimeout(() => {setPilotStatus(noDataMessage)}, timeoutValue);
+        handleHeadindValueTimeout = setTimeout(() => {setHeadindValue(noDataMessage)}, timeoutValue);
       }
 
       ws.onclose = function() {
-//        console.log("ws close");
-        ws = null;
-        connected = false;
+        cleanOnClosed();
         if (reconnect === true) {
           setTimeout(() => {wsConnect()}, timeoutReconnect);
         }
@@ -115,23 +134,25 @@ var wsConnect = function() {
 
       ws.onerror = function() {
         console.log("ws error");
-        ws = null;
-        connected = false;
+        cleanOnClosed();
+        errorIconDiv.style.visibility = 'visible';
         if (reconnect === true) {
           setTimeout(() => {wsConnect()}, timeoutReconnect);
         }
       }
 
       ws.onmessage = function(event) {
-        document.getElementById("receiveIcon").style.visibility = 'visible';
+        receiveIconDiv.style.visibility = 'visible';
         clearTimeout(handleReceiveTimeout);
-        handleReceiveTimeout = setTimeout(() => {document.getElementById("receiveIcon").style.visibility = 'hidden';}, timeoutBlink);
+        handleReceiveTimeout = setTimeout(() => {receiveIconDiv.style.visibility = 'hidden';}, timeoutBlink);
         var jsonData = JSON.parse(event.data)
         dispatchMessages(jsonData);
       }
 
     } catch (exception) {
       console.error(exception);
+      cleanOnClosed();
+      errorIconDiv.style.visibility = 'visible';
       setTimeout(() => {wsConnect()}, timeoutReconnect);
     }
   }
@@ -144,11 +165,11 @@ var dispatchMessages = function(jsonData) {
         update.values.forEach((value) => {
           if (value.path === "steering.autopilot.state") {
             clearTimeout(handlePilotStatusTimeout);
-            handlePilotStatusTimeout = setTimeout(() => {setPilotStatus('---')}, timeoutValue);
+            handlePilotStatusTimeout = setTimeout(() => {setPilotStatus(noDataMessage)}, timeoutValue);
             setPilotStatus(value.value);
           } else if (value.path === "navigation.headingMagnetic") {
             clearTimeout(handleHeadindValueTimeout);
-            handleHeadindValueTimeout = setTimeout(() => {setHeadindValue('---')}, timeoutValue);
+            handleHeadindValueTimeout = setTimeout(() => {setHeadindValue(noDataMessage)}, timeoutValue);
             setHeadindValue(Math.round(value.value * (180/Math.PI)));
           }
         });
@@ -158,16 +179,17 @@ var dispatchMessages = function(jsonData) {
 }
 
 var setHeadindValue = function(value) {
-  if (typeof value !== 'undefined') {
-    value = (isNaN(value)) ? '---' : 'Mag:' + value + '&deg;';
-  } else {
-    value = '???';
+  if (value !== '') {
+    value = ((typeof value === 'undefined') || isNaN(value)) ? noDataMessage : 'Mag:' + value + '&deg;';
   }
   headingValueDiv.innerHTML = value;
 }
 
 var setPilotStatus = function(value) {
-  pilotStatusDiv.innerHTML = value || '???';
+  if (typeof value === 'undefined') {
+    value = noDataMessage;
+  }
+  pilotStatusDiv.innerHTML = value;
 }
 
 var wsOpenClose = function() {
@@ -175,9 +197,21 @@ var wsOpenClose = function() {
     wsConnect();
   } else {
       reconnect = false;
-      document.getElementById("powerIcon").style.visibility = 'visible';
       if (ws !== null) {
         ws.close();
       }
+      cleanOnClosed();
     }
+}
+
+var cleanOnClosed = function() {
+  ws = null;
+  connected = false;
+  powerOffIconDiv.style.visibility = 'visible';
+  powerOnIconDiv.style.visibility = 'hidden';
+  bottomBarIconDiv.style.visibility = 'hidden';
+  clearTimeout(handleHeadindValueTimeout);
+  clearTimeout(handlePilotStatusTimeout);
+  setPilotStatus('');
+  setHeadindValue('');
 }

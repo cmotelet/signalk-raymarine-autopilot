@@ -31,7 +31,8 @@
         <div class="icon18x18" id="sendIcon"></div>
         <div class="icon18x18" id="errorIcon"></div>
         <div class="icon18x18" id="receiveIcon"></div>
-        <div class="icon18x18" id="powerIcon"></div>
+        <div class="icon18x18" id="powerOffIcon"></div>
+        <div class="icon18x18" id="powerOnIcon"></div>
       </div>
       <div id="bottomBarIcon">&nbsp;Loading Ray Remote...</div>
       <div id="headingValue"></div>
@@ -43,7 +44,7 @@
         <div class="defaultTextFontKey" id="keyTackStarbordText"></div>
       </div>
       <div class="defaultTextFontKey" id="tackLabel">: TACK :</div>
-      <div class="defaultKey btnBottomSmallBlack" id="keyMute" onClick="sendCommand('mute');" onTouchend="touchEnd(event)">
+      <div class="defaultKey btnBottomSmallBlack" id="keyMute" onClick="sendMute();" onTouchend="touchEnd(event)">
         <div class="defaultTextFontKey" id="keyMuteText"></div>
       </div>
       <div class="defaultKey btnBottomSmallBlack" id="keyPower" onClick="wsOpenClose();" onTouchend="touchEnd(event)">
@@ -59,7 +60,7 @@
         <div class="defaultTextFontKey" id="keyPlusTenText">+10</div>
       </div>
       <div class="defaultKey btnRightBlack" id="keyPlusOne" onClick="sendCommand('+1');" onTouchend="touchEnd(event)">
-        <div class="defaultTextFontKey" id="keyPlusOneText"></div>
+        <div class="defaultTextFontKey" id="keyPlusOneText">+1</div>
       </div>
       <div class="defaultKey btnCircleRed" id="keyAuto" onClick="sendCommand('auto');" onTouchend="touchEnd(event)">
         <div class="defaultTextFontKey" id="keyAutoText">AUTO</div>
