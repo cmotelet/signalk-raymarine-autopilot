@@ -26,7 +26,7 @@ var sendCommand = function(cmd) {
     },
     body: commands[cmd],
   }).then(function(response) {
-      setTimeout(function(){document.getElementById("sendIcon").style.visibility = 'hidden';}, 800);
+      setTimeout(() => {document.getElementById("sendIcon").style.visibility = 'hidden';}, 800);
       if (response.status !== 200) {
         document.getElementById("errorIcon").style.visibility = 'visible';
         if (response.status === 401) {
@@ -42,33 +42,84 @@ var sendCommand = function(cmd) {
         alert(status.message)
     }
   );
+  reconnect = true;
+  wsConnect();
 }
 
-var ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + window.location.host + "/signalk/v1/stream?subscribe=none");
+var ws = null;
+var handleMessageStatus = 'undefined';
+var reconnect = true;
 
-ws.onopen = function() {
-  var subscriptionObject = {
-    "context": "vessels.self",
-    "subscribe": [{
-      "path": "navigation.courseOverGroundTrue",
-      "period": 5000,
-      "format": "delta",
-      "minPeriod": 1000
-    }]
-  };
-  var subscriptionMessage = JSON.stringify(subscriptionObject);
-  console.log("Sending subscription:" + subscriptionMessage)
-  ws.send(subscriptionMessage);
+var wsConnect = function() {
+  if (ws === null) {
+    try {
+      document.getElementById("powerIcon").style.visibility = 'hidden';
+      reconnect = true;
+      ws = new WebSocket((window.location.protocol === 'https:' ? 'wss' : 'ws') + "://" + window.location.host + "/signalk/v1/stream?subscribe=none");
+
+      ws.onopen = function() {
+        var subscriptionObject = {
+          "context": "vessels.self",
+          "subscribe": [{
+            "path": "steering.autopilot.state",
+//          "period": 5000,
+            "format": "delta",
+            "minPeriod": 900
+          }]
+        };
+        var subscriptionMessage = JSON.stringify(subscriptionObject);
+        console.log("Sending subscription:" + subscriptionMessage)
+        ws.send(subscriptionMessage);
+        handleMessageStatusTimeout = setTimeout(() => {setMessageStatus('---')}, 3000);
+      }
+
+      ws.onclose = function() {
+        console.log("ws close");
+        ws = null;
+        if (reconnect === true) {
+          setTimeout(() => {wsConnect()}, 2000);
+        }
+      }
+
+      ws.onerror = function(error) {
+        console.log("ws error:" + error);
+        ws = null;
+        if (reconnect === true) {
+          setTimeout(() => {wsConnect()}, 2000);
+        }
+      }
+
+      ws.onmessage = function(event) {
+        document.getElementById("receiveIcon").style.visibility = 'visible';
+        setTimeout(() => {document.getElementById("receiveIcon").style.visibility = 'hidden';}, 500);
+        var jsonData = JSON.parse(event.data)
+//        var timestamp = new Date(jsonData.updates[0].timestamp)
+        if (typeof jsonData.updates === 'object') {
+          if (typeof jsonData.updates[0].values === 'object') {
+            var value = jsonData.updates[0].values[0].value;
+            setMessageStatus(value);
+            clearTimeout(handleMessageStatusTimeout);
+            handleMessageStatusTimeout = setTimeout(() => {setMessageStatus('---')}, 3000);
+          }
+        }
+      }
+
+    } catch (exception) {
+      console.error(exception);
+      setTimeout(() => {wsConnect()}, 2000);
+    }
+  }
 }
 
-ws.onclose = function() {
-  console.log("ws close");
+
+var setMessageStatus = function(value) {
+  dataDiv.innerHTML = value || '???';
 }
 
-ws.onmessage = function(event) {
-  var jsonData = JSON.parse(event.data)
-  var timestamp = new Date(jsonData.updates[0].timestamp)
-  var value = jsonData.updates[0].values[0].value;
-  dataDiv.innerHTML = value + '<BR/>' + timestamp.toDateString() + '<BR/>' + timestamp.toTimeString();
-//  console.log(value)
+var wsClose = function() {
+  reconnect = false;
+  document.getElementById("powerIcon").style.visibility = 'visible';
+  if (ws !== null) {
+    ws.close();
+  }
 }
