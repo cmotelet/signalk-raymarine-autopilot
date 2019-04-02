@@ -160,6 +160,9 @@ html {
   background-repeat: no-repeat;
   background-position-x: right;
   background-color: initial;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon18x18 {
@@ -346,4 +349,50 @@ html {
   height: 25px;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAg0lEQVRIx81WQQ7AIAwCn+j//+IuW6IeZqmyjDOIqZYW7QYCULg9Sn9AVKQacRaRZNRgxR1M3EbMihUud8RRLndvGeHyRDlW3GN1f+NS6YmsEdXmyxgx0+WqUcEH+Ee57A9v/8L2ZrTHij0g7VFvH1r28es2GLYVAFVIiirlinMVenABXi3An6ky178AAAAASUVORK5CYII=);
   right: 10px;
+}
+
+/* https://colibriwp.com/blog/scrolling-text/ */
+/*
+.example1 {
+ height: 50px;  
+ overflow: hidden;
+ position: relative;
+}
+*/
+
+.example1 p {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateX(100%);
+ -webkit-transform:translateX(100%);    
+ transform:translateX(100%);
+ /* Apply animation to this element */  
+ -moz-animation: example1 5s linear infinite;
+ -webkit-animation: example1 5s linear infinite;
+ animation: example1 5s linear infinite;
+}
+/* Move it (define the animation) */
+@-moz-keyframes example1 {
+ 0%   { -moz-transform: translateX(100%); }
+ 100% { -moz-transform: translateX(-100%); }
+}
+@-webkit-keyframes example1 {
+ 0%   { -webkit-transform: translateX(100%); }
+ 100% { -webkit-transform: translateX(-100%); }
+}
+@keyframes example1 {
+ 0%   { 
+ -moz-transform: translateX(100%); /* Firefox bug fix */
+ -webkit-transform: translateX(100%); /* Firefox bug fix */
+ transform: translateX(100%);       
+ }
+ 100% { 
+ -moz-transform: translateX(-100%); /* Firefox bug fix */
+ -webkit-transform: translateX(-100%); /* Firefox bug fix */
+ transform: translateX(-100%); 
+ }
 }

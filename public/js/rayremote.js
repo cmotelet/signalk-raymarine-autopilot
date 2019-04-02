@@ -11,6 +11,8 @@ const commands = {
   "tackToStarboard":   '{"action":"tackTo","value":"starboard"}'
 }
 
+var notificationsArray = {};
+
 var touchEnd = function(event) {
   event.currentTarget.onclick();
   event.preventDefault(true);
@@ -115,6 +117,11 @@ var wsConnect = function() {
               "path": "navigation.headingMagnetic",
               "format": "delta",
               "minPeriod": 900
+            },
+            {
+              "path": "notifications.autopilot.*",
+              "format": "delta",
+              "minPeriod": 200
             }
           ]
         };
@@ -171,6 +178,8 @@ var dispatchMessages = function(jsonData) {
             clearTimeout(handleHeadindValueTimeout);
             handleHeadindValueTimeout = setTimeout(() => {setHeadindValue(noDataMessage)}, timeoutValue);
             setHeadindValue(Math.round(value.value * (180/Math.PI)));
+          } else if (value.path.startsWith("notifications.autopilot")) {
+            setNotificationMessage(value);
           }
         });
       }
@@ -190,6 +199,21 @@ var setPilotStatus = function(value) {
     value = noDataMessage;
   }
   pilotStatusDiv.innerHTML = value;
+}
+
+var setNotificationMessage = function(value) {
+  if (typeof value.path !== 'undefined') {
+    value.path = value.path.replace('notifications.autopilot', '');
+    if (typeof value.value !== 'undefined') {
+      if (value.value.state === 'normal') {
+        delete notificationsArray[value.path]
+      } else {
+          notificationsArray[value.path] = value.value.message.replace('Pilot', '');
+          bottomBarIconDiv.style.visibility = 'visible';
+          bottomBarIconDiv.innerHTML = '<p>' + notificationsArray[value.path] + '</p>';
+        }
+    }
+  }
 }
 
 var wsOpenClose = function() {
