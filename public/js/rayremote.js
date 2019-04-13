@@ -8,7 +8,8 @@ const commands = {
   "-1":      '{"action":"changeHeadingByKey","value":"-1"}',
   "-10":     '{"action":"changeHeadingByKey","value":"-10"}',
   "tackToPort":   '{"action":"tackTo","value":"port"}',
-  "tackToStarboard":   '{"action":"tackTo","value":"starboard"}'
+  "tackToStarboard":   '{"action":"tackTo","value":"starboard"}',
+  "silenceAlarm": '{"action":"silenceAlarm","value":{"signalkPath":"' + 'autopilot.PilotWatch' + '"}}'
 }
 
 var notificationsArray = {};
@@ -95,6 +96,7 @@ var sendMute = function() {
   bottomBarIconDiv.style.visibility = 'visible';
   bottomBarIconDiv.innerHTML = '&nbsp;Not implemented...'
   setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
+  sendCommand("silenceAlarm")
 }
 
 var notificationScroll = function() {
