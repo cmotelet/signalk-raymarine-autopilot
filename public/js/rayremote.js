@@ -36,6 +36,7 @@ var errorIconDiv = 'undefined';
 var powerOnIconDiv = 'undefined';
 var powerOffIconDiv = 'undefined';
 var bottomBarIconDiv = 'undefined';
+var notificationCounterDiv = 'undefined';
 
 var startUpRayRemote = function() {
   pilotStatusDiv = document.getElementById('pilotStatus');
@@ -46,6 +47,7 @@ var startUpRayRemote = function() {
   powerOnIconDiv = document.getElementById('powerOnIcon');
   powerOffIconDiv = document.getElementById('powerOffIcon');
   bottomBarIconDiv = document.getElementById('bottomBarIcon');
+  notificationCounterDiv = document.getElementById('notificationCounter');
 
   setPilotStatus(noDataMessage);
   setHeadindValue(noDataMessage);
@@ -54,6 +56,7 @@ var startUpRayRemote = function() {
     sendIconDiv.style.visibility = 'hidden';
     errorIconDiv.style.visibility = 'hidden';
     bottomBarIconDiv.style.visibility = 'hidden';
+    notificationCounterDiv.style.visibility = 'hidden';
     wsConnect();
   }, 1000);
 }
@@ -89,6 +92,12 @@ var sendCommand = function(cmd) {
 }
 
 var sendMute = function() {
+  bottomBarIconDiv.style.visibility = 'visible';
+  bottomBarIconDiv.innerHTML = '&nbsp;Not implemented...'
+  setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
+}
+
+var notificationScroll = function() {
   bottomBarIconDiv.style.visibility = 'visible';
   bottomBarIconDiv.innerHTML = '&nbsp;Not implemented...'
   setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
@@ -210,10 +219,19 @@ var setNotificationMessage = function(value) {
       } else {
           notificationsArray[value.path] = value.value.message.replace('Pilot', '');
           bottomBarIconDiv.style.visibility = 'visible';
-          bottomBarIconDiv.innerHTML = '<p>' + notificationsArray[value.path] + '</p>';
+//          bottomBarIconDiv.innerHTML = '<p>' + notificationsArray[value.path] + '</p>';
+          bottomBarIconDiv.innerHTML = notificationsArray[value.path];
         }
     }
   }
+  var alarmsCount = Object.keys(notificationsArray).length;
+  if (alarmsCount > 0) {
+    notificationCounterDiv.innerHTML = alarmsCount;
+    notificationCounterDiv.style.visibility = 'visible'
+  } else {
+      notificationCounterDiv.innerHTML = '';
+      notificationCounterDiv.style.visibility = 'hidden';
+    }
 }
 
 var wsOpenClose = function() {
@@ -231,9 +249,14 @@ var wsOpenClose = function() {
 var cleanOnClosed = function() {
   ws = null;
   connected = false;
+  receiveIconDiv.style.visibility = 'hidden';
+  sendIconDiv.style.visibility = 'hidden';
+  errorIconDiv.style.visibility = 'hidden';
+  bottomBarIconDiv.style.visibility = 'hidden';
+  notificationCounterDiv.style.visibility = 'hidden';
   powerOffIconDiv.style.visibility = 'visible';
   powerOnIconDiv.style.visibility = 'hidden';
-  bottomBarIconDiv.style.visibility = 'hidden';
+  notificationCounterDiv.innerHTML = '';
   clearTimeout(handleHeadindValueTimeout);
   clearTimeout(handlePilotStatusTimeout);
   setPilotStatus('');
