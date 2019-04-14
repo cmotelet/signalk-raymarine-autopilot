@@ -8,8 +8,7 @@ const commands = {
   "-1":      '{"action":"changeHeadingByKey","value":"-1"}',
   "-10":     '{"action":"changeHeadingByKey","value":"-10"}',
   "tackToPort":   '{"action":"tackTo","value":"port"}',
-  "tackToStarboard":   '{"action":"tackTo","value":"starboard"}',
-  "silenceAlarm": '{"action":"silenceAlarm","value":{"signalkPath":"' + 'autopilot.PilotWatch' + '"}}'
+  "tackToStarboard":   '{"action":"tackTo","value":"starboard"}'
 }
 
 var notificationsArray = {};
@@ -23,21 +22,30 @@ var ws = null;
 var handlePilotStatusTimeout = null;
 var handleHeadindValueTimeout = null;
 var handleReceiveTimeout = null;
+var handleSilenceScreenTimeout = null;
+var handleConfirmTackTimeout = null;
 var connected = false;
 var reconnect = true;
 const timeoutReconnect = 2000;
 const timeoutValue = 2000;
 const timeoutBlink = 500;
-const noDataMessage = 'NO DATA';
-var pilotStatusDiv = 'undefined';
-var headingValueDiv = 'undefined';
-var receiveIconDiv = 'undefined';
-var sendIconDiv = 'undefined';
-var errorIconDiv = 'undefined';
-var powerOnIconDiv = 'undefined';
-var powerOffIconDiv = 'undefined';
-var bottomBarIconDiv = 'undefined';
-var notificationCounterDiv = 'undefined';
+//const noDataMessage = 'NO DATA';
+const noDataMessage = '-- -- -- --';
+var pilotStatusDiv = undefined;
+var headingValueDiv = undefined;
+var receiveIconDiv = undefined;
+var sendIconDiv = undefined;
+var errorIconDiv = undefined;
+var powerOnIconDiv = undefined;
+var powerOffIconDiv = undefined;
+var bottomBarIconDiv = undefined;
+var notificationCounterDiv = undefined;
+var notificationCounterTextDiv = undefined;
+var silenceScreenDiv = undefined;
+var silenceScreenText = undefined;
+var tackScreenDiv = undefined;
+var skPathToAck = '';
+var tackConfirmed = false;
 
 var startUpRayRemote = function() {
   pilotStatusDiv = document.getElementById('pilotStatus');
@@ -49,7 +57,10 @@ var startUpRayRemote = function() {
   powerOffIconDiv = document.getElementById('powerOffIcon');
   bottomBarIconDiv = document.getElementById('bottomBarIcon');
   notificationCounterDiv = document.getElementById('notificationCounter');
-
+  notificationCounterTextDiv = document.getElementById('notificationCounterText');
+  silenceScreenDiv = document.getElementById('silenceScreen');
+  silenceScreenTextDiv = document.getElementById('silenceScreenText');
+  tackScreenDiv = document.getElementById('tackScreen');
   setPilotStatus(noDataMessage);
   setHeadindValue(noDataMessage);
   setTimeout(() => {
@@ -62,7 +73,26 @@ var startUpRayRemote = function() {
   }, 1000);
 }
 
-var sendCommand = function(cmd) {
+var buildAndSendCommand = function(cmd) {
+  var cmdJson = commands[cmd];
+  if (((cmd === 'tackToPort')||(cmd === 'tackToStarboard')) && (tackConfirmed === false)) {
+    confirmTack(cmd);
+    return null;
+  }
+  if (typeof cmdJson !== 'undefined') {
+    sendCommand(cmdJson);
+  } else {
+      alert('Unknown command !')
+    }
+  if (tackConfirmed) {
+    clearTimeout(handleConfirmTackTimeout);
+    tackScreenDiv.style.visibility = 'hidden';
+    tackScreenDiv.innerHTML = '';
+    tackConfirmed = false;
+  }
+}
+
+var sendCommand = function(cmdJson) {
   errorIconDiv.style.visibility = 'hidden';
   sendIconDiv.style.visibility = 'visible';
   window.fetch('/plugins/raymarineautopilot/command', {
@@ -70,7 +100,7 @@ var sendCommand = function(cmd) {
     headers: {
       "Content-Type": "application/json"
     },
-    body: commands[cmd],
+    body: cmdJson,
   }).then(function(response) {
       setTimeout(() => {sendIconDiv.style.visibility = 'hidden';}, timeoutBlink);
       if (response.status !== 200) {
@@ -92,17 +122,80 @@ var sendCommand = function(cmd) {
   wsConnect();
 }
 
-var sendMute = function() {
-  bottomBarIconDiv.style.visibility = 'visible';
-  bottomBarIconDiv.innerHTML = '&nbsp;Not implemented...'
-  setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
-  sendCommand("silenceAlarm")
+var sendSilence = function() {
+  if (silenceScreenDiv.style.visibility !== 'visible') {
+    silenceScreenDiv.style.visibility = 'visible';
+    autoHhideSilenceScreen();
+    if ((Object.keys(notificationsArray).length > 0) && (skPathToAck === '')) {
+      skPathToAck = Object.keys(notificationsArray)[0];
+    }
+  } else {
+      if (skPathToAck !== '') {
+        sendCommand('{"action":"silenceAlarm","value":{"signalkPath":"' + skPathToAck + '"}}');
+      }
+      silenceScreenDiv.style.visibility = 'hidden';
+    }
+  silenceScreenTextDiv.innerHTML = notificationsArray[skPathToAck];
 }
 
 var notificationScroll = function() {
-  bottomBarIconDiv.style.visibility = 'visible';
-  bottomBarIconDiv.innerHTML = '&nbsp;Not implemented...'
-  setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
+  autoHhideSilenceScreen();
+  if (silenceScreenDiv.style.visibility !== 'visible') {
+    silenceScreenDiv.style.visibility = 'visible';
+    if ((Object.keys(notificationsArray).length > 0) && (skPathToAck === '')) {
+      skPathToAck = Object.keys(notificationsArray)[0];
+    }
+  } else {
+      skPathToAck = getNextNotification(skPathToAck);
+    }
+  silenceScreenTextDiv.innerHTML = notificationsArray[skPathToAck];
+}
+
+var autoHhideSilenceScreen = function() {
+  clearTimeout(handleSilenceScreenTimeout);
+  handleSilenceScreenTimeout = setTimeout(() => {
+    silenceScreenDiv.style.visibility = 'hidden';
+  }, 5000);
+}
+
+var getNextNotification = function(skPath) {
+  var notificationsKeys = Object.keys(notificationsArray);
+  var newSkPathToAck = '';
+  var index;
+  if (notificationsKeys.length > 0) {
+    if (typeof skPath !== 'undefined') {
+      index = notificationsKeys.indexOf(skPath) + 1;
+    } else {
+        index = 0;
+      }
+    if (notificationsKeys.length <= index) {
+      index = 0;
+    }
+    newSkPathToAck = notificationsKeys[index];
+  }
+  return newSkPathToAck;
+}
+
+var confirmTack = function(cmd) {
+  var message = 'Repeat same key<br>to confirm<br>tack to ';
+  tackConfirmed = true;
+  if (cmd === 'tackToPort') {
+    message += 'port';
+  } else if (cmd === 'tackToStarboard') {
+      message += 'starboard';
+    } else {
+        tackConfirmed = false;
+        return null;
+      }
+  tackScreenDiv.innerHTML = '<p>' + message + '</p>';
+  tackScreenDiv.style.visibility = 'visible';
+  clearTimeout(handleConfirmTackTimeout);
+  handleConfirmTackTimeout = setTimeout(() => {
+    tackScreenDiv.style.visibility = 'hidden';
+    tackScreenDiv.innerHTML = '';
+    tackConfirmed = false;
+  }, 5000);
+
 }
 
 var wsConnect = function() {
@@ -214,28 +307,32 @@ var setPilotStatus = function(value) {
 
 var setNotificationMessage = function(value) {
   if (typeof value.path !== 'undefined') {
-    value.path = value.path.replace('notifications.autopilot', '');
+    value.path = value.path.replace('notifications.', '');
     if (typeof value.value !== 'undefined') {
       if (value.value.state === 'normal') {
         delete notificationsArray[value.path]
       } else {
           notificationsArray[value.path] = value.value.message.replace('Pilot', '');
           bottomBarIconDiv.style.visibility = 'visible';
-//          bottomBarIconDiv.innerHTML = '<p>' + notificationsArray[value.path] + '</p>';
           bottomBarIconDiv.innerHTML = notificationsArray[value.path];
         }
     }
   }
   var alarmsCount = Object.keys(notificationsArray).length;
   if (alarmsCount > 0) {
-    notificationCounterDiv.innerHTML = alarmsCount;
-    notificationCounterDiv.style.visibility = 'visible'
+    notificationCounterTextDiv.innerHTML = alarmsCount;
+    notificationCounterDiv.style.visibility = 'visible';
   } else {
-      notificationCounterDiv.innerHTML = '';
+      notificationCounterTextDiv.innerHTML = '';
       notificationCounterDiv.style.visibility = 'hidden';
     }
 }
 
+var displayHelp = function() {
+  bottomBarIconDiv.style.visibility = 'visible';
+  bottomBarIconDiv.innerHTML = '&nbsp;Not yet implemented...'
+  setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
+}
 var wsOpenClose = function() {
   if (connected === false) {
     wsConnect();
@@ -258,7 +355,12 @@ var cleanOnClosed = function() {
   notificationCounterDiv.style.visibility = 'hidden';
   powerOffIconDiv.style.visibility = 'visible';
   powerOnIconDiv.style.visibility = 'hidden';
-  notificationCounterDiv.innerHTML = '';
+  notificationCounterDiv.style.visibility = 'hidden';
+  silenceScreenDiv.style.visibility = 'hidden';
+  notificationCounterTextDiv.innerHTML = '';
+  notificationsArray = {};
+  skPathToAck = '';
+  tackConfirmed = false;
   clearTimeout(handleHeadindValueTimeout);
   clearTimeout(handlePilotStatusTimeout);
   setPilotStatus('');
