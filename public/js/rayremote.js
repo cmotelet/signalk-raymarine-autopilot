@@ -122,6 +122,14 @@ var sendCommand = function(cmdJson) {
   wsConnect();
 }
 
+var notificationToValue = function (skPathToAck) {
+  var message = notificationsArray[skPathToAck];
+  if (typeof message === 'undefined') {
+    message = 'No current alarm...';
+  }
+  return message;
+}
+
 var sendSilence = function() {
   if (silenceScreenDiv.style.visibility !== 'visible') {
     silenceScreenDiv.style.visibility = 'visible';
@@ -135,7 +143,7 @@ var sendSilence = function() {
       }
       silenceScreenDiv.style.visibility = 'hidden';
     }
-  silenceScreenTextDiv.innerHTML = notificationsArray[skPathToAck];
+  silenceScreenTextDiv.innerHTML = notificationToValue(skPathToAck);
 }
 
 var notificationScroll = function() {
@@ -148,7 +156,7 @@ var notificationScroll = function() {
   } else {
       skPathToAck = getNextNotification(skPathToAck);
     }
-  silenceScreenTextDiv.innerHTML = notificationsArray[skPathToAck];
+  silenceScreenTextDiv.innerHTML = notificationToValue(skPathToAck);
 }
 
 var autoHhideSilenceScreen = function() {
