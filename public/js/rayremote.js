@@ -80,6 +80,9 @@ var buildAndSendCommand = function(cmd) {
     return null;
   }
   if (typeof cmdJson !== 'undefined') {
+    if ((cmd === 'tackToPort')||(cmd === 'tackToStarboard')) {
+      sendCommand(commands['auto']);
+    }
     sendCommand(cmdJson);
   } else {
       alert('Unknown command !')
