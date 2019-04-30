@@ -24,6 +24,7 @@ var handleHeadindValueTimeout = null;
 var handleReceiveTimeout = null;
 var handleSilenceScreenTimeout = null;
 var handleConfirmTackTimeout = null;
+var handleCountDownCounterTimeout = null;
 var connected = false;
 var reconnect = true;
 const timeoutReconnect = 2000;
@@ -36,6 +37,7 @@ var headingValueDiv = undefined;
 var receiveIconDiv = undefined;
 var sendIconDiv = undefined;
 var errorIconDiv = undefined;
+var countDownCounterDiv = undefined;
 var powerOnIconDiv = undefined;
 var powerOffIconDiv = undefined;
 var bottomBarIconDiv = undefined;
@@ -46,6 +48,7 @@ var silenceScreenText = undefined;
 var tackScreenDiv = undefined;
 var skPathToAck = '';
 var tackConfirmed = false;
+var countDownValue = 0;
 
 var startUpRayRemote = function() {
   pilotStatusDiv = document.getElementById('pilotStatus');
@@ -61,6 +64,7 @@ var startUpRayRemote = function() {
   silenceScreenDiv = document.getElementById('silenceScreen');
   silenceScreenTextDiv = document.getElementById('silenceScreenText');
   tackScreenDiv = document.getElementById('tackScreen');
+  countDownCounterDiv = document.getElementById('countDownCounter');
   setPilotStatus(noDataMessage);
   setHeadindValue(noDataMessage);
   setTimeout(() => {
@@ -69,8 +73,9 @@ var startUpRayRemote = function() {
     errorIconDiv.style.visibility = 'hidden';
     bottomBarIconDiv.style.visibility = 'hidden';
     notificationCounterDiv.style.visibility = 'hidden';
+    countDownCounterDiv.innerHTML = '';
     wsConnect();
-  }, 1000);
+  }, 1500);
 }
 
 var buildAndSendCommand = function(cmd) {
@@ -81,6 +86,8 @@ var buildAndSendCommand = function(cmd) {
   }
   if (typeof cmdJson !== 'undefined') {
     if ((cmd === 'tackToPort')||(cmd === 'tackToStarboard')) {
+      countDownValue = 0;
+      updateCountDownCounter();
       sendCommand(commands['auto']);
     }
     sendCommand(cmdJson);
@@ -144,6 +151,8 @@ var sendSilence = function() {
       if (skPathToAck !== '') {
         sendCommand('{"action":"silenceAlarm","value":{"signalkPath":"' + skPathToAck + '"}}');
       }
+      countDownValue = 0;
+      updateCountDownCounter();
       silenceScreenDiv.style.visibility = 'hidden';
     }
   silenceScreenTextDiv.innerHTML = notificationToValue(skPathToAck);
@@ -163,9 +172,13 @@ var notificationScroll = function() {
 }
 
 var autoHhideSilenceScreen = function() {
+  countDownValue = 5;
+  updateCountDownCounter();
   clearTimeout(handleSilenceScreenTimeout);
   handleSilenceScreenTimeout = setTimeout(() => {
     silenceScreenDiv.style.visibility = 'hidden';
+    countDownValue = 0;
+    updateCountDownCounter();
   }, 5000);
 }
 
@@ -198,6 +211,8 @@ var confirmTack = function(cmd) {
         tackConfirmed = false;
         return null;
       }
+  countDownValue = 5;
+  updateCountDownCounter();
   tackScreenDiv.innerHTML = '<p>' + message + '</p>';
   tackScreenDiv.style.visibility = 'visible';
   clearTimeout(handleConfirmTackTimeout);
@@ -241,7 +256,6 @@ var wsConnect = function() {
           ]
         };
         var subscriptionMessage = JSON.stringify(subscriptionObject);
-//        console.log("Sending subscription:" + subscriptionMessage)
         ws.send(subscriptionMessage);
         handlePilotStatusTimeout = setTimeout(() => {setPilotStatus(noDataMessage)}, timeoutValue);
         handleHeadindValueTimeout = setTimeout(() => {setHeadindValue(noDataMessage)}, timeoutValue);
@@ -344,6 +358,7 @@ var displayHelp = function() {
   bottomBarIconDiv.innerHTML = '&nbsp;Not yet implemented...'
   setTimeout(() => {bottomBarIconDiv.style.visibility = 'hidden';}, 2000);
 }
+
 var wsOpenClose = function() {
   if (connected === false) {
     wsConnect();
@@ -376,4 +391,18 @@ var cleanOnClosed = function() {
   clearTimeout(handlePilotStatusTimeout);
   setPilotStatus('');
   setHeadindValue('');
+}
+
+var updateCountDownCounter = function() {
+  if (countDownValue > 0) {
+    clearTimeout(handleCountDownCounterTimeout);
+    countDownCounterDiv.innerHTML = countDownValue;
+    countDownValue -= 1;
+    handleCountDownCounterTimeout = setTimeout(() => {
+      updateCountDownCounter();
+    }, 1000);
+  } else {
+      clearTimeout(handleCountDownCounterTimeout);
+      countDownCounterDiv.innerHTML = '';
+    }
 }

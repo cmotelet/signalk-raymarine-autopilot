@@ -214,6 +214,11 @@ html {
   text-align: right;
 }
 
+#countDownCounter {
+  left: 36px;
+  text-align: center;
+}
+
 #headingValue {
   top: 116px;
   left: 38px;
