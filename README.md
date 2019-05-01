@@ -2,7 +2,7 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/sbender9/signalk-raymarine-autopilot.svg)](https://greenkeeper.io/)
 
-<p align="center">![small rayremote](./small-rayremote.png "small rayremote picture")</p>
+<p align="center"><img src="./small-rayremote.png"></p>
 
 `signalk-raymarine-autopilot` signal is composed of 2 modules: 
 - [A graphical interface that emulates a Raymarine remote control](./GUI-help.md "GUI help")
