@@ -2,6 +2,9 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/sbender9/signalk-raymarine-autopilot.svg)](https://greenkeeper.io/)
 
+`signalk-raymarine-autopilot` signal is composed of 2 modules. 
+- [GUI-help.md](GUI-help.md.md "GUI help")
+- An API described below.
 
 # API
 
