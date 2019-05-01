@@ -67,6 +67,7 @@ var startUpRayRemote = function() {
   countDownCounterDiv = document.getElementById('countDownCounter');
   setPilotStatus(noDataMessage);
   setHeadindValue(noDataMessage);
+//  demo(); return;
   setTimeout(() => {
     receiveIconDiv.style.visibility = 'hidden';
     sendIconDiv.style.visibility = 'hidden';
@@ -76,6 +77,15 @@ var startUpRayRemote = function() {
     countDownCounterDiv.innerHTML = '';
     wsConnect();
   }, 1500);
+}
+
+var demo = function () {
+  setHeadindValue(100);
+  setPilotStatus('WIND');
+  setNotificationMessage({"path":"notifications.autopilot.PilotWarningWindShift","value":{"state":"alarm","message":"Pilot Warning Wind Shift"}});
+  powerOffIconDiv.style.visibility = 'hidden';
+  powerOnIconDiv.style.visibility = 'visible';
+  countDownCounterDiv.innerHTML = '5';
 }
 
 var buildAndSendCommand = function(cmd) {
