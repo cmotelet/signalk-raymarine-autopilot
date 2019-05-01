@@ -85,8 +85,8 @@ In acknowledgement by the numeric code, the `value` is :
 {
   "action": "silenceAlarm",
   "value": {
-    "groupId": 0x01,
-    "alarmId": 0x47
+    "groupId": "0x01",
+    "alarmId": "0x47"
   }
 }
 ```
