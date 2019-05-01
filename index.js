@@ -29,7 +29,7 @@ const keys_code = {
     "-1":      "05,fa",
     "-10":     "06,f9",
     "-1-10":   "21,de",
-    "+1+10":   "22,dd",
+    "+1+10":   "22,dd"
 }
 const raymarineAlarmGroupCodes = {
     "instrument": 0x00,
@@ -147,7 +147,7 @@ const alarmsId = {
     "AISLostTarget": 0x69,
     "AISSafetyRelatedMessage(usedtosilence)": 0x6a,
     "AISConnectionLost": 0x6b,
-    "NoFix": 0x6c,
+    "NoFix": 0x6c
 };
 const key_command = "%s,7,126720,%s,%s,22,3b,9f,f0,81,86,21,%s,ff,ff,ff,ff,ff,c1,c2,cd,66,80,d3,42,b1,c8"
 const heading_command = "%s,3,126208,%s,%s,14,01,50,ff,00,f8,03,01,3b,07,03,04,06,%s,%s"
